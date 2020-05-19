@@ -1,0 +1,1 @@
+"use strict";var localLng,localLat;function success(o){var t=o.coords;localLng=t.longitude,localLat=t.latitude,console.log(t.longitude,t.latitude)}navigator.geolocation.getCurrentPosition(success);
