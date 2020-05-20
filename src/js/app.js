@@ -40,7 +40,7 @@ function getForcast(lat, lon) {
     if (resp.ok) {
       return resp.json();
     } else {
-      throw new Error("There is an error on getting weather.");
+      throw new Error("There is an error on getting forcast.");
     }
   })
   .then((json) => {
@@ -59,9 +59,9 @@ function forecast(array) {
   for(let list of array) {
     if (new Date(list.dt_txt).getDay() !== date.getDay()) {
       if (weatherObj[weekday[new Date(list.dt_txt).getDay()]] === undefined) {
-        weatherObj[weekday[new Date(list.dt_txt).getDay()]] = [list]
+        weatherObj[weekday[new Date(list.dt_txt).getDay()]] = [list];
       } else {
-        weatherObj[weekday[new Date(list.dt_txt).getDay()]].push(list)
+        weatherObj[weekday[new Date(list.dt_txt).getDay()]].push(list);
       }
     }
   }
