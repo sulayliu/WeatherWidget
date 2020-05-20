@@ -19,10 +19,21 @@ function getWeather(lat, lon) {
     if (resp.ok) {
       return resp.json();
     } else {
-      throw new Error("There is an error on street name.");
+      throw new Error("There is an error on getting weather.");
     }
   })
   .then((json) => {
     console.log(json);
+    currentWeather(json);
   })
+}
+
+function currentWeather(json) {
+  const currentCondition = document.querySelector(`.current-conditions`);
+  const temp = document.querySelector(`.temp`);
+  const condition = document.querySelector(`.condition`);
+
+  currentCondition.querySelector(`img`).src = `http://openweathermap.org/img/wn/${json.weather[0].icon}@2x.png`;
+  temp.textContent = json.main.temp
+  condition.textContent = json.weather[0].main;
 }
