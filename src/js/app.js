@@ -28,13 +28,14 @@ function getWeather(lat, lon) {
 // Fill the page through current weater data.
 function currentWeather(json) {
   const currentCondition = document.querySelector(`.current-conditions`);
-  const temp = document.querySelector(`.temp`);
-  const condition = document.querySelector(`.condition`);
-
-  currentCondition.querySelector(`img`).src = `http://openweathermap.org/img/wn/${json.weather[0].icon}@2x.png`;
-  temp.textContent = `${json.main.temp.toFixed(0)}℃`
-  condition.textContent = json.weather[0].main;
+  currentCondition.innerHTML = `<h2>Current Conditions</h2>
+    <img src="http://openweathermap.org/img/wn/${json.weather[0].icon}@2x.png" />
+    <div class="current">
+      <div class="temp">${json.main.temp.toFixed(0)}℃</div>
+      <div class="condition">${json.weather[0].main}</div>`
 }
+
+
 
 function getForcast(lat, lon) {
   fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apikey}&units=metric`)
