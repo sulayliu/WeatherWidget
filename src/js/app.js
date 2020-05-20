@@ -56,6 +56,7 @@ function forecast(array) {
   let html = ``;
   const forecastEle = document.querySelector(`.forecast`);
   forecastEle.textContent = ``;
+
   for(let i = 0; i < 5; i++) {
     let newArray = [];
     date.setDate(date.getDate() + 1);
@@ -66,22 +67,23 @@ function forecast(array) {
         newArray.push(ele);
       }
     }
-
-    newArray.sort((a, b) => b.main.temp_max - a.main.temp_max);
     let maxTemp = [...newArray]
+    maxTemp.sort((a, b) => b.main.temp_max - a.main.temp_max);
     console.log(maxTemp[0].main.temp_max);
     let minTemp = newArray.sort((a, b) => a.main.temp_min - b.main.temp_min);
     console.log(minTemp[0].main.temp_min);
+    let noonWeater = newArray.find(ele => new Date(ele.dt_txt).getHours() == 12);
+    console.log(noonWeater);
+    html += `<div class="day">
+        <h3>${weekday[date.getDay()]}</h3>
+        <img src="http://openweathermap.org/img/wn/${noonWeater.weather[0].icon}@2x.png">
+        <div class="description">${noonWeater.weather[0].description}</div>
+        <div class="temp">
+          <span class="high">${maxTemp[0].main.temp_max.toFixed(0)}℃</span>/<span class="low">${minTemp[0].main.temp_min.toFixed(0)}℃</span>
+        </div>
+      </div>`
   }
+
+  forecastEle.insertAdjacentHTML(`beforeend`, html)
 }
 
-`
-<div class="day">
-  <h3>Tuesday</h3>
-  <img src="http://openweathermap.org/img/wn/01d@2x.png">
-  <div class="description">clear sky</div>
-  <div class="temp">
-    <span class="high">11℃</span>/<span class="low">-3℃</span>
-  </div>
-</div>
-`
