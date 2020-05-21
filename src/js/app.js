@@ -45,7 +45,7 @@ function getForcast(lat, lon) {
     }
   })
   .then((json) => {
-    forecast(json.list)
+    forecast(json.list);
   })
 }
 
@@ -56,29 +56,30 @@ function forecast(array) {
   forecastEle.textContent = ``;
   
   for (let i = 0; i < 5; i++) {
-    let newArray = [];
+    let weatherLists = [];
     date.setDate(date.getDate() + 1);
 
     // Get the weater list of array on each day.
     for (let ele of array) {
       if (new Date(ele.dt_txt).getDate() === date.getDate()) {
-        newArray.push(ele);
+        weatherLists.push(ele);
       }
     }
-    newArray.sort((a, b) => b.main.temp_max - a.main.temp_max);
-    let maxTemp = newArray[0].main.temp_max;
+    // Sort the weather list and get the max temp.
+    weatherLists.sort((a, b) => b.main.temp_max - a.main.temp_max);
+    let maxTemp = weatherLists[0].main.temp_max;
 
-    newArray.sort((a, b) => a.main.temp_min - b.main.temp_min);
-
-    let minTemp = newArray[0].main.temp_min;
+    // Sort the weather list and get the min temp.
+    weatherLists.sort((a, b) => a.main.temp_min - b.main.temp_min);
+    let minTemp = weatherLists[0].main.temp_min;
 
     // Use the 12 o'clock weather data to show the icon.
-    let showWeather = newArray.find(ele => new Date(ele.dt_txt).getHours() == 12);
+    let showWeather = weatherLists.find(ele => new Date(ele.dt_txt).getHours() == 12);
 
     // When we query at midnight between 0:00 AM to 3:00 AM, the 5th weather list do not have the 12 o'clock data, 
     // so I use the 0:00 AM weather data.
     if (showWeather === undefined) {
-      showWeather = newArray.find(ele => new Date(ele.dt_txt).getHours() == 0);
+      showWeather = weatherLists.find(ele => new Date(ele.dt_txt).getHours() == 0);
     }
 
     html += `<div class="day">
