@@ -85,13 +85,14 @@ function forecast(array) {
     // Get the noon's weather data to show.
     let showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 12);
 
-    // The reason why use 3:00 data is that when we query at night between 0:00 am to 3:00 am the 5th weather list only have two lists 
-    // about: 0 am and 3 am weather data of the 5th day.
+    // The reason why use 3:00 data is that when we query at midnight between 0:00 AM to 3:00 AM,
+    // the 5th weather list only have two lists about: 0:00 AM and 3:00 AM, 
+    // so I use the 3:00 AM weather data.
     if (showWeather === undefined) {
       showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 3);
     }
 
-    // Except the day that only have 0 am weather.
+    // Insert the HTML with the weather data, except the last day that only have 0:00 AM weather.
     if (showWeather !== undefined) {
       html += `<div class="day">
       <h3>${ele[0]}</h3>
@@ -103,6 +104,6 @@ function forecast(array) {
     </div>`
     }
   });
-  
+
   forecastEle.insertAdjacentHTML(`beforeend`, html);
 }
