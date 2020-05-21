@@ -82,21 +82,27 @@ function forecast(array) {
     ele[1].sort((a, b) => a.main.temp_min - b.main.temp_min);
     let minTemp = ele[1][0].main.temp_min;
 
-    // Get the noon's weather data.
-    let noonWeater = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 12);
-    
-    // Except the data that do not have the noon weather.
-    if (noonWeater !== undefined) {
+    // Get the noon's weather data to show.
+    let showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 12);
+
+    // The reason why use 3:00 data is that when we query at night between 0:00 am to 3:00 am the 5th weather list only have two lists 
+    // about: 0 am and 3 am weather data of the 5th day.
+    if (showWeather === undefined) {
+      showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 3);
+    }
+
+    // Except the day that only have 0 am weather.
+    if (showWeather !== undefined) {
       html += `<div class="day">
       <h3>${ele[0]}</h3>
-      <img src="http://openweathermap.org/img/wn/${noonWeater.weather[0].icon}@2x.png">
-      <div class="description">${noonWeater.weather[0].description}</div>
+      <img src="http://openweathermap.org/img/wn/${showWeather.weather[0].icon}@2x.png">
+      <div class="description">${showWeather.weather[0].description}</div>
       <div class="temp">
         <span class="high">${maxTemp.toFixed(0)}℃</span>/<span class="low">${minTemp.toFixed(0)}℃</span>
       </div>
     </div>`
     }
   });
-
+  
   forecastEle.insertAdjacentHTML(`beforeend`, html);
 }
