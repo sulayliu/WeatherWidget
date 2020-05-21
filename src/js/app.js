@@ -51,59 +51,45 @@ function getForcast(lat, lon) {
 
 function forecast(array) {
   const forecastEle = document.querySelector(`.forecast`);
-  const weatherObj = {};
-  const date = new Date();
+  let date = new Date();
   let html = ``;
-
   forecastEle.textContent = ``;
   
-  // Classify the weather list by the date and store them in an object.
-  // The keys name is weekday and the value is an array contains weather data.
-  for(let list of array) {
-    if (new Date(list.dt_txt).getDay() !== date.getDay()) {
-      if (weatherObj[weekday[new Date(list.dt_txt).getDay()]] === undefined) {
-        weatherObj[weekday[new Date(list.dt_txt).getDay()]] = [list];
-      } else {
-        weatherObj[weekday[new Date(list.dt_txt).getDay()]].push(list);
+  for (let i = 0; i < 5; i++) {
+    let newArray = [];
+    date.setDate(date.getDate() + 1);
+
+    // Get the weater list of array on each day.
+    for (let ele of array) {
+      if (new Date(ele.dt_txt).getDate() === date.getDate()) {
+        newArray.push(ele);
       }
     }
-  }
+    newArray.sort((a, b) => b.main.temp_max - a.main.temp_max);
+    let maxTemp = newArray[0].main.temp_max;
 
-  // Translate the object to an array and sort the array by date order.
-  const newArray = Object.entries(weatherObj).sort((a, b) => new Date(a[1].dt_txt) > new Date(b[1].dt_txt) ? -1 : 1 );
+    newArray.sort((a, b) => a.main.temp_min - b.main.temp_min);
 
-  // Get each day's weather data and insert into HTML.
-  newArray.forEach(ele => {
-    // Get the day's max temp.
-    ele[1].sort((a, b) => b.main.temp_max - a.main.temp_max);
-    let maxTemp = ele[1][0].main.temp_max;
-    
-    // Get the day's min temp.
-    ele[1].sort((a, b) => a.main.temp_min - b.main.temp_min);
-    let minTemp = ele[1][0].main.temp_min;
+    let minTemp = newArray[0].main.temp_min;
 
-    // Get the noon's weather data to show.
-    let showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 12);
+    // Use the 12 o'clock weather data to show the icon.
+    let showWeather = newArray.find(ele => new Date(ele.dt_txt).getHours() == 12);
 
-    // The reason why use 6:00 data is that when we query at midnight between 0:00 AM to 3:00 AM,
-    // the 5th weather list do not have the 12 o'clock data, 
-    // so I use the 6:00 AM weather data.
+    // When we query at midnight between 0:00 AM to 3:00 AM, the 5th weather list do not have the 12 o'clock data, 
+    // so I use the 0:00 AM weather data.
     if (showWeather === undefined) {
-      showWeather = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 6);
+      showWeather = newArray.find(ele => new Date(ele.dt_txt).getHours() == 0);
     }
 
-    // Insert the HTML with the weather data, except the last day that only have 0:00 AM weather.
-    if (showWeather !== undefined) {
-      html += `<div class="day">
-      <h3>${ele[0]}</h3>
-      <img src="http://openweathermap.org/img/wn/${showWeather.weather[0].icon}@2x.png">
-      <div class="description">${showWeather.weather[0].description}</div>
-      <div class="temp">
-        <span class="high">${maxTemp.toFixed(0)}℃</span>/<span class="low">${minTemp.toFixed(0)}℃</span>
-      </div>
-    </div>`
-    }
-  });
+    html += `<div class="day">
+        <h3>${weekday[date.getDay()]}</h3>
+        <img src="http://openweathermap.org/img/wn/${showWeather.weather[0].icon}@2x.png">
+        <div class="description">${showWeather.weather[0].description}</div>
+        <div class="temp">
+          <span class="high">${maxTemp.toFixed(0)}℃</span>/<span class="low">${minTemp.toFixed(0)}℃</span>
+        </div>
+      </div>`
+  }
 
   forecastEle.insertAdjacentHTML(`beforeend`, html);
 }
