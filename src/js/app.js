@@ -34,6 +34,7 @@ function currentWeather(json) {
       <div class="condition">${json.weather[0].description}</div>`
 }
 
+// Get the list of 5 days' weather from forcast API.
 function getForcast(lat, lon) {
   fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apikey}&units=metric`)
   .then((resp) => {
@@ -49,13 +50,15 @@ function getForcast(lat, lon) {
 }
 
 function forecast(array) {
-  let date = new Date();
-  let html = ``;
   const forecastEle = document.querySelector(`.forecast`);
-  forecastEle.textContent = ``;
   const weatherObj = {};
+  const date = new Date();
+  let html = ``;
+
+  forecastEle.textContent = ``;
   
   // Classify the weather list by the date and store them in an object.
+  // The keys name is weekday and the value is an array contains weather data.
   for(let list of array) {
     if (new Date(list.dt_txt).getDay() !== date.getDay()) {
       if (weatherObj[weekday[new Date(list.dt_txt).getDay()]] === undefined) {
@@ -66,8 +69,8 @@ function forecast(array) {
     }
   }
 
-  // Translate the object to an array and sort the array by date.
-  const newArray = Object.entries(weatherObj).sort((a, b) => new Date(a[1].dt_txt) > new Date(b[1].dt_txt)? -1 : 1 )
+  // Translate the object to an array and sort the array by date order.
+  const newArray = Object.entries(weatherObj).sort((a, b) => new Date(a[1].dt_txt) > new Date(b[1].dt_txt) ? -1 : 1 );
 
   // Get each day's weather data and insert into HTML.
   newArray.forEach(ele => {
@@ -81,15 +84,18 @@ function forecast(array) {
 
     // Get the noon's weather data.
     let noonWeater = ele[1].find(weather => new Date(weather.dt_txt).getHours() == 12);
-
-    html += `<div class="day">
-        <h3>${ele[0]}</h3>
-        <img src="http://openweathermap.org/img/wn/${noonWeater.weather[0].icon}@2x.png">
-        <div class="description">${noonWeater.weather[0].description}</div>
-        <div class="temp">
-          <span class="high">${maxTemp.toFixed(0)}℃</span>/<span class="low">${minTemp.toFixed(0)}℃</span>
-        </div>
-      </div>`
+    
+    // Except the data that do not have the noon weather.
+    if (noonWeater !== undefined) {
+      html += `<div class="day">
+      <h3>${ele[0]}</h3>
+      <img src="http://openweathermap.org/img/wn/${noonWeater.weather[0].icon}@2x.png">
+      <div class="description">${noonWeater.weather[0].description}</div>
+      <div class="temp">
+        <span class="high">${maxTemp.toFixed(0)}℃</span>/<span class="low">${minTemp.toFixed(0)}℃</span>
+      </div>
+    </div>`
+    }
   });
 
   forecastEle.insertAdjacentHTML(`beforeend`, html);
