@@ -20,7 +20,9 @@ function minifyCSS() {
 }
 
 function sync() {
+  
   browserSync.init({
+    files: [".html", "src/.css", "src/*.js"],
     server: {
       baseDir: "./dist"
     }
